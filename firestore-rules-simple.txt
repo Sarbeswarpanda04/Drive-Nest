@@ -1,0 +1,34 @@
+// Simplified Firestore Security Rules for Drive Nest - DEVELOPMENT MODE
+// Copy these rules to your Firebase Console > Firestore Database > Rules
+// WARNING: These are permissive rules for development only!
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Files collection - allow authenticated users to read/write their own files
+    match /files/{fileId} {
+      allow read, write, create, update, delete: if request.auth != null 
+        && (
+          request.auth.uid == resource.data.uploadedBy ||
+          request.auth.uid == resource.data.ownerId ||
+          request.auth.uid == request.resource.data.uploadedBy ||
+          request.auth.uid == request.resource.data.ownerId
+        );
+    }
+    
+    // Activities collection - allow authenticated users to access their activity
+    match /activities/{activityId} {
+      allow read, write, create, update, delete: if request.auth != null 
+        && (
+          request.auth.uid == resource.data.userId ||
+          request.auth.uid == request.resource.data.userId
+        );
+    }
+    
+    // User data
+    match /users/{userId} {
+      allow read, write, create, update, delete: if request.auth != null 
+        && request.auth.uid == userId;
+    }
+  }
+}

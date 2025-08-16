@@ -1,0 +1,48 @@
+// Firestore Security Rules for Drive Nest
+// Copy these rules to your Firebase Console > Firestore Database > Rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Files collection - users can only access their own files
+    match /files/{fileId} {
+      // Allow users to read, write, and delete their own files
+      allow read, write, delete: if request.auth != null 
+        && request.auth.uid == resource.data.uploadedBy;
+      
+      // Allow users to create files they own
+      allow create: if request.auth != null 
+        && request.auth.uid == request.resource.data.uploadedBy
+        && request.resource.data.keys().hasAll(['name', 'size', 'type', 'uploadedBy', 'uploadedAt'])
+        && request.resource.data.size is number
+        && request.resource.data.size <= 1048576; // 1MB limit
+    }
+    
+    // Shared files - allow read access if user is in sharedWith array
+    match /files/{fileId} {
+      allow read: if request.auth != null 
+        && (request.auth.uid in resource.data.get('sharedWith', [])
+            || request.auth.uid == resource.data.uploadedBy);
+    }
+    
+    // Activity logs - users can only access their own activity
+    match /activity/{activityId} {
+      allow read, write: if request.auth != null 
+        && request.auth.uid == resource.data.userId;
+      
+      allow create: if request.auth != null 
+        && request.auth.uid == request.resource.data.userId;
+    }
+    
+    // User profiles/settings
+    match /users/{userId} {
+      allow read, write: if request.auth != null 
+        && request.auth.uid == userId;
+    }
+    
+    // Prevent access to all other documents
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

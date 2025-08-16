@@ -1,0 +1,13 @@
+// TEMPORARY - Very Permissive Firestore Security Rules for Testing
+// Copy these rules to your Firebase Console > Firestore Database > Rules
+// WARNING: These rules are for DEVELOPMENT/TESTING only!
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow all authenticated users to read/write everything (TESTING ONLY)
+    match /{document=**} {
+      allow read, write, create, update, delete: if request.auth != null;
+    }
+  }
+}

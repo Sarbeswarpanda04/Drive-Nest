@@ -1,0 +1,146 @@
+{
+  "name": "Drive Nest - Personal Cloud Storage",
+  "short_name": "Drive Nest",
+  "description": "A modern, feature-rich personal cloud storage web application with file preview, drag-and-drop uploads, and Google OAuth authentication.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4F46E5",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "categories": ["productivity", "utilities", "storage"],
+  "icons": [
+    {
+      "src": "icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Upload Files",
+      "short_name": "Upload",
+      "description": "Upload new files to your drive",
+      "url": "/#upload",
+      "icons": [
+        {
+          "src": "icons/upload-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "My Files",
+      "short_name": "Files",
+      "description": "View your uploaded files",
+      "url": "/#files",
+      "icons": [
+        {
+          "src": "icons/files-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/desktop-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Drive Nest dashboard on desktop"
+    },
+    {
+      "src": "screenshots/mobile-home.png",
+      "sizes": "360x640",
+      "type": "image/png",
+      "label": "Drive Nest dashboard on mobile"
+    },
+    {
+      "src": "screenshots/file-preview.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "File preview with zoom controls"
+    }
+  ],
+  "features": [
+    "Cross Platform",
+    "fast",
+    "simple"
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "handle_links": "preferred",
+  "capture_links": "existing-client-navigate",
+  "protocol_handlers": [
+    {
+      "protocol": "web+drivenest",
+      "url": "/?action=%s"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "image/*": [".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"],
+        "video/*": [".mp4", ".webm", ".ogg", ".avi", ".mov"],
+        "audio/*": [".mp3", ".wav", ".ogg", ".aac", ".flac"],
+        "application/pdf": [".pdf"],
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
+        "text/*": [".txt", ".md", ".html", ".css", ".js", ".json"]
+      },
+      "launch_type": "single-client"
+    }
+  ]
+}
