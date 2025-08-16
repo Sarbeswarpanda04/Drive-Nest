@@ -490,10 +490,17 @@ class DriveNestApp {
    */
   updatePreviewInfo(file) {
     document.getElementById('info-size').textContent = this.formatFileSize(file.size);
-    document.getElementById('info-type').textContent = file.type;
+    document.getElementById('info-type').textContent = file.type || file.mimeType || '';
     document.getElementById('info-created').textContent = this.formatDate(file.created);
     document.getElementById('info-modified').textContent = this.formatDate(file.modified || file.created);
-    document.getElementById('info-owner').textContent = file.ownerEmail || this.user.email;
+    document.getElementById('info-owner').textContent = file.ownerEmail || this.user?.email || '';
+    
+    // Update star button
+    const starBtn = document.getElementById('star-btn');
+    if (starBtn) {
+      starBtn.innerHTML = file.starred ? '⭐ Starred' : '☆ Star';
+      starBtn.className = file.starred ? 'btn btn-warning' : 'btn btn-outline';
+    }
   }
 
   /**
