@@ -429,11 +429,13 @@ class DriveNestApp {
    * Open file preview modal
    */
   async openFilePreview(fileId) {
+    console.log('Opening file preview for fileId:', fileId);
     const file = this.files.find(f => f.id === fileId);
     if (!file) return;
     
     // Store the current preview file ID
     this.currentPreviewFileId = fileId;
+    console.log('Stored currentPreviewFileId:', this.currentPreviewFileId);
     
     try {
       const previewModal = document.getElementById('preview-modal');
@@ -482,6 +484,7 @@ class DriveNestApp {
    * Get the current file ID being previewed
    */
   getCurrentPreviewFileId() {
+    console.log('getCurrentPreviewFileId called, returning:', this.currentPreviewFileId);
     return this.currentPreviewFileId;
   }
 
@@ -599,8 +602,14 @@ class DriveNestApp {
    * Download file
    */
   async downloadFile(fileId) {
+    console.log('downloadFile called with fileId:', fileId);
     const file = this.files.find(f => f.id === fileId);
-    if (!file) return;
+    if (!file) {
+      console.error('File not found for download:', fileId);
+      return;
+    }
+    
+    console.log('Found file for download:', file);
     
     try {
       const url = await this.storageManager.getDownloadURL(file.id);
@@ -805,37 +814,66 @@ class DriveNestApp {
     });
 
     // Preview modal buttons
-    document.getElementById('download-btn')?.addEventListener('click', () => {
+    const downloadBtn = document.getElementById('download-btn');
+    const starBtn = document.getElementById('star-btn');
+    const renameBtn = document.getElementById('rename-btn');
+    const moveBtn = document.getElementById('move-btn');
+    const duplicateBtn = document.getElementById('duplicate-btn');
+    const deleteBtn = document.getElementById('delete-btn');
+    const shareBtn = document.getElementById('share-btn');
+
+    console.log('Setting up preview modal button listeners:', {
+      downloadBtn: !!downloadBtn,
+      starBtn: !!starBtn,
+      renameBtn: !!renameBtn,
+      moveBtn: !!moveBtn,
+      duplicateBtn: !!duplicateBtn,
+      deleteBtn: !!deleteBtn,
+      shareBtn: !!shareBtn
+    });
+
+    downloadBtn?.addEventListener('click', () => {
+      console.log('Download button clicked');
       const fileId = this.getCurrentPreviewFileId();
+      console.log('Current preview file ID:', fileId);
       if (fileId) this.downloadFile(fileId);
     });
 
-    document.getElementById('star-btn')?.addEventListener('click', async () => {
+    starBtn?.addEventListener('click', async () => {
+      console.log('Star button clicked');
       const fileId = this.getCurrentPreviewFileId();
+      console.log('Current preview file ID:', fileId);
       if (fileId) await this.toggleStar(fileId);
     });
 
-    document.getElementById('rename-btn')?.addEventListener('click', async () => {
+    renameBtn?.addEventListener('click', async () => {
+      console.log('Rename button clicked');
       const fileId = this.getCurrentPreviewFileId();
+      console.log('Current preview file ID:', fileId);
       if (fileId) await this.renameFile(fileId);
     });
 
-    document.getElementById('move-btn')?.addEventListener('click', async () => {
+    moveBtn?.addEventListener('click', async () => {
+      console.log('Move button clicked');
       const fileId = this.getCurrentPreviewFileId();
       if (fileId) await this.moveFile(fileId);
     });
 
-    document.getElementById('duplicate-btn')?.addEventListener('click', async () => {
+    duplicateBtn?.addEventListener('click', async () => {
+      console.log('Duplicate button clicked');
       const fileId = this.getCurrentPreviewFileId();
       if (fileId) await this.duplicateFile(fileId);
     });
 
-    document.getElementById('delete-btn')?.addEventListener('click', async () => {
+    deleteBtn?.addEventListener('click', async () => {
+      console.log('Delete button clicked');
       const fileId = this.getCurrentPreviewFileId();
+      console.log('Current preview file ID:', fileId);
       if (fileId) await this.deleteFile(fileId);
     });
 
-    document.getElementById('share-btn')?.addEventListener('click', async () => {
+    shareBtn?.addEventListener('click', async () => {
+      console.log('Share button clicked');
       const fileId = this.getCurrentPreviewFileId();
       if (fileId) await this.shareFile(fileId);
     });
@@ -1167,10 +1205,17 @@ class DriveNestApp {
    */
   async toggleStar(fileId) {
     try {
+      console.log('toggleStar called with fileId:', fileId);
       const file = this.files.find(f => f.id === fileId);
-      if (!file) return;
+      if (!file) {
+        console.error('File not found:', fileId);
+        return;
+      }
 
+      console.log('Current file starred status:', file.starred);
       const newStarred = !file.starred;
+      console.log('Setting starred to:', newStarred);
+      
       await firestoreManager.starFile(fileId, newStarred, this.user.uid);
       
       // Update local file object
@@ -1181,6 +1226,7 @@ class DriveNestApp {
       this.updatePreviewInfo(file);
       
       showToast(`File ${newStarred ? 'starred' : 'unstarred'}`, 'success');
+      console.log('Star toggle completed successfully');
     } catch (error) {
       console.error('Error toggling star:', error);
       showToast('Error updating star status', 'error');
