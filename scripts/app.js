@@ -432,6 +432,9 @@ class DriveNestApp {
     const file = this.files.find(f => f.id === fileId);
     if (!file) return;
     
+    // Store the current preview file ID
+    this.currentPreviewFileId = fileId;
+    
     try {
       const previewModal = document.getElementById('preview-modal');
       const previewContent = document.getElementById('preview-content');
@@ -473,6 +476,13 @@ class DriveNestApp {
       this.currentPreviewController.destroy();
       this.currentPreviewController = null;
     }
+  }
+
+  /**
+   * Get the current file ID being previewed
+   */
+  getCurrentPreviewFileId() {
+    return this.currentPreviewFileId;
   }
 
   /**
@@ -785,6 +795,42 @@ class DriveNestApp {
         const modal = btn.closest('.modal');
         hideModal(modal.id);
       });
+    });
+
+    // Preview modal buttons
+    document.getElementById('download-btn')?.addEventListener('click', () => {
+      const fileId = this.getCurrentPreviewFileId();
+      if (fileId) this.downloadFile(fileId);
+    });
+
+    document.getElementById('star-btn')?.addEventListener('click', async () => {
+      const fileId = this.getCurrentPreviewFileId();
+      if (fileId) await this.toggleStar(fileId);
+    });
+
+    document.getElementById('rename-btn')?.addEventListener('click', async () => {
+      const fileId = this.getCurrentPreviewFileId();
+      if (fileId) await this.renameFile(fileId);
+    });
+
+    document.getElementById('move-btn')?.addEventListener('click', async () => {
+      const fileId = this.getCurrentPreviewFileId();
+      if (fileId) await this.moveFile(fileId);
+    });
+
+    document.getElementById('duplicate-btn')?.addEventListener('click', async () => {
+      const fileId = this.getCurrentPreviewFileId();
+      if (fileId) await this.duplicateFile(fileId);
+    });
+
+    document.getElementById('delete-btn')?.addEventListener('click', async () => {
+      const fileId = this.getCurrentPreviewFileId();
+      if (fileId) await this.deleteFile(fileId);
+    });
+
+    document.getElementById('share-btn')?.addEventListener('click', async () => {
+      const fileId = this.getCurrentPreviewFileId();
+      if (fileId) await this.shareFile(fileId);
     });
     
     // Modal backdrops
