@@ -1154,6 +1154,108 @@ class DriveNestApp {
     
     this.renderFiles();
   }
+
+  /**
+   * Toggle star status of a file
+   */
+  async toggleStar(fileId) {
+    try {
+      const file = this.files.find(f => f.id === fileId);
+      if (!file) return;
+
+      const newStarred = !file.starred;
+      await firestoreManager.starFile(fileId, newStarred, this.user.uid);
+      
+      // Update local file object
+      file.starred = newStarred;
+      
+      // Update UI
+      this.renderFiles();
+      this.updatePreviewInfo(file);
+      
+      showToast(`File ${newStarred ? 'starred' : 'unstarred'}`, 'success');
+    } catch (error) {
+      console.error('Error toggling star:', error);
+      showToast('Error updating star status', 'error');
+    }
+  }
+
+  /**
+   * Rename a file
+   */
+  async renameFile(fileId) {
+    try {
+      const file = this.files.find(f => f.id === fileId);
+      if (!file) return;
+
+      const newName = prompt('Enter new filename:', file.name);
+      if (!newName || newName === file.name) return;
+
+      await firestoreManager.renameFile(fileId, newName, this.user.uid);
+      
+      // Update local file object
+      file.name = newName;
+      
+      // Update UI
+      this.renderFiles();
+      document.getElementById('preview-filename').textContent = newName;
+      
+      showToast('File renamed successfully', 'success');
+    } catch (error) {
+      console.error('Error renaming file:', error);
+      showToast('Error renaming file', 'error');
+    }
+  }
+
+  /**
+   * Move a file (placeholder - would need folder selection UI)
+   */
+  async moveFile(fileId) {
+    showToast('Move functionality coming soon', 'info');
+  }
+
+  /**
+   * Duplicate a file (placeholder - would need duplication logic)
+   */
+  async duplicateFile(fileId) {
+    showToast('Duplicate functionality coming soon', 'info');
+  }
+
+  /**
+   * Delete a file
+   */
+  async deleteFile(fileId) {
+    try {
+      const file = this.files.find(f => f.id === fileId);
+      if (!file) return;
+
+      if (!confirm(`Are you sure you want to delete "${file.name}"?`)) return;
+
+      await firestoreManager.trashFile(fileId, this.user.uid);
+      
+      // Remove from local files array
+      this.files = this.files.filter(f => f.id !== fileId);
+      this.filteredFiles = this.filteredFiles.filter(f => f.id !== fileId);
+      
+      // Close preview modal if this file was being previewed
+      hideModal('preview-modal');
+      
+      // Update UI
+      this.renderFiles();
+      
+      showToast('File moved to trash', 'success');
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      showToast('Error deleting file', 'error');
+    }
+  }
+
+  /**
+   * Share a file (placeholder - would need sharing UI)
+   */
+  async shareFile(fileId) {
+    showToast('Share functionality coming soon', 'info');
+  }
 }
 
 // Initialize app when DOM is loaded
