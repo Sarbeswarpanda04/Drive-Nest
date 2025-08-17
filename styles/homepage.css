@@ -100,7 +100,7 @@
   33% { transform: translateY(-10px) rotate(3deg); }
   66% { transform: translateY(5px) rotate(-3deg); }
 }
-}
+
 
 /* Auth Gate - Full Viewport Layout */
 .auth-gate {
@@ -249,7 +249,7 @@
 }
 
 .feature.glass-card {
-  aspect-ratio: 1;
+  aspect-ratio: 0;
   background: var(--glass-bg);
   backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
