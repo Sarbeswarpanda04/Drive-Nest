@@ -18,6 +18,7 @@
     
     <!-- Manifest and Favicon -->
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     
     <!-- CSS Imports -->
@@ -25,9 +26,69 @@
     <link rel="stylesheet" href="styles/theme.css">
     <link rel="stylesheet" href="styles/components.css">
     <link rel="stylesheet" href="styles/preview.css">
+    <link rel="stylesheet" href="styles/homepage.css">
+    <link rel="stylesheet" href="styles/splash.css">
     
     <!-- Scripts -->
     <script>
+        // Enhanced Splash Screen Controller
+        window.splashController = {
+            statusMessages: [
+                "Initializing...",
+                "Loading core modules...",
+                "Connecting to Firebase...",
+                "Setting up security...",
+                "Preparing workspace...",
+                "Almost ready..."
+            ],
+            
+            currentMessageIndex: 0,
+            statusElement: null,
+            
+            init() {
+                this.statusElement = document.getElementById('loading-status-text');
+                this.startStatusUpdates();
+                
+                // Auto-hide splash screen after loading
+                setTimeout(() => {
+                    this.hideSplash();
+                }, 4000); // Show splash for 4 seconds
+            },
+            
+            startStatusUpdates() {
+                const updateStatus = () => {
+                    if (this.statusElement && this.currentMessageIndex < this.statusMessages.length) {
+                        this.statusElement.textContent = this.statusMessages[this.currentMessageIndex];
+                        this.currentMessageIndex++;
+                        
+                        if (this.currentMessageIndex < this.statusMessages.length) {
+                            setTimeout(updateStatus, 600);
+                        }
+                    }
+                };
+                
+                setTimeout(updateStatus, 500);
+            },
+            
+            hideSplash() {
+                const splashScreen = document.getElementById('loading-screen');
+                if (splashScreen) {
+                    splashScreen.style.animation = 'splashFadeOut 0.8s ease-in forwards';
+                    
+                    setTimeout(() => {
+                        splashScreen.style.display = 'none';
+                        
+                        // Show the auth gate
+                        const authGate = document.getElementById('auth-gate');
+                        if (authGate) {
+                            authGate.classList.remove('hidden');
+                            authGate.style.animation = 'fadeIn 0.8s ease-out';
+                        }
+                    }, 800);
+                }
+            }
+        };
+
         // Error handler to catch and display errors
         window.addEventListener('error', (e) => {
             console.error('Global Error:', e.error);
@@ -52,6 +113,11 @@
         // Unhandled promise rejection handler
         window.addEventListener('unhandledrejection', (e) => {
             console.error('Unhandled Promise Rejection:', e.reason);
+        });
+
+        // Initialize splash screen when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.splashController.init();
         });
 
         // Function to continue to demo
@@ -183,82 +249,285 @@
 </head>
 <body data-theme="system">
 
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="loading-screen">
-        <div class="loading-content">
-            <div class="logo-container">
-                <svg class="logo" viewBox="0 0 100 100" width="80" height="80">
-                    <defs>
-                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:var(--brand);stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:var(--brand-600);stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    <rect x="10" y="20" width="80" height="60" rx="15" fill="url(#logoGradient)" opacity="0.3"/>
-                    <rect x="15" y="25" width="70" height="50" rx="12" fill="url(#logoGradient)" opacity="0.6"/>
-                    <rect x="20" y="30" width="60" height="40" rx="10" fill="url(#logoGradient)"/>
-                    <circle cx="35" cy="45" r="3" fill="white" opacity="0.8"/>
-                    <circle cx="50" cy="45" r="3" fill="white" opacity="0.8"/>
-                    <circle cx="65" cy="45" r="3" fill="white" opacity="0.8"/>
-                </svg>
+    <!-- Splash Screen -->
+    <div id="loading-screen" class="splash-screen">
+        <!-- Animated Background -->
+        <div class="splash-background">
+            <div class="splash-particle particle-1"></div>
+            <div class="splash-particle particle-2"></div>
+            <div class="splash-particle particle-3"></div>
+            <div class="splash-particle particle-4"></div>
+            <div class="splash-particle particle-5"></div>
+            <div class="splash-particle particle-6"></div>
+            <div class="splash-wave wave-1"></div>
+            <div class="splash-wave wave-2"></div>
+            <div class="splash-wave wave-3"></div>
+        </div>
+
+        <!-- Splash Content -->
+        <div class="splash-content">
+            <!-- Logo Section -->
+            <div class="splash-logo-container">
+                <!-- Main Logo Image -->
+                <div class="splash-logo-wrapper">
+                    <img src="assets/images/drive-nest-logo.png" alt="Drive Nest Logo" class="splash-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <!-- Fallback SVG Logo -->
+                    <div class="splash-logo-fallback" style="display: none;">
+                        <svg class="splash-logo-svg" viewBox="0 0 140 140" width="140" height="140">
+                            <defs>
+                                <linearGradient id="splashGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                    <stop offset="30%" style="stop-color:#a855f7;stop-opacity:1" />
+                                    <stop offset="70%" style="stop-color:#7c3aed;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#6d28d9;stop-opacity:1" />
+                                </linearGradient>
+                                <filter id="splashGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                                    <feMerge> 
+                                        <feMergeNode in="coloredBlur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                                <filter id="innerShadow">
+                                    <feOffset dx="0" dy="2"/>
+                                    <feGaussianBlur stdDeviation="3"/>
+                                    <feComposite operator="over"/>
+                                </filter>
+                            </defs>
+                            
+                            <!-- Outer glow ring -->
+                            <circle cx="70" cy="70" r="60" fill="none" stroke="url(#splashGradient)" stroke-width="2" opacity="0.3" filter="url(#splashGlow)">
+                                <animate attributeName="r" values="55;65;55" dur="3s" repeatCount="indefinite"/>
+                                <animate attributeName="opacity" values="0.1;0.4;0.1" dur="3s" repeatCount="indefinite"/>
+                            </circle>
+                            
+                            <!-- Main cloud structure -->
+                            <path d="M25 60 Q25 40 45 40 Q70 20 95 40 Q115 40 115 60 Q115 80 95 80 L45 80 Q25 80 25 60 Z" 
+                                  fill="url(#splashGradient)" opacity="0.9" filter="url(#splashGlow)">
+                                <animateTransform attributeName="transform" type="scale" values="1;1.08;1" dur="4s" repeatCount="indefinite"/>
+                            </path>
+                            
+                            <!-- Inner cloud layer -->
+                            <path d="M35 65 Q35 50 50 50 Q70 35 90 50 Q105 50 105 65 Q105 80 90 80 L50 80 Q35 80 35 65 Z" 
+                                  fill="url(#splashGradient)" opacity="0.7">
+                                <animateTransform attributeName="transform" type="scale" values="0.95;1.02;0.95" dur="3.5s" repeatCount="indefinite"/>
+                            </path>
+                            
+                            <!-- File dots with pulsing animation -->
+                            <circle cx="50" cy="65" r="4" fill="white" opacity="0.95" filter="url(#innerShadow)">
+                                <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/>
+                                <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="70" cy="60" r="4" fill="white" opacity="0.95" filter="url(#innerShadow)">
+                                <animate attributeName="opacity" values="1;0.6;1" dur="2s" repeatCount="indefinite"/>
+                                <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="90" cy="65" r="4" fill="white" opacity="0.95" filter="url(#innerShadow)">
+                                <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/>
+                                <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+                            </circle>
+                            
+                            <!-- Nest base -->
+                            <path d="M45 90 Q70 100 95 90" stroke="url(#splashGradient)" stroke-width="3" fill="none" opacity="0.6">
+                                <animate attributeName="opacity" values="0.4;0.8;0.4" dur="3s" repeatCount="indefinite"/>
+                            </path>
+                            <path d="M55 95 Q70 102 85 95" stroke="url(#splashGradient)" stroke-width="2" fill="none" opacity="0.4">
+                                <animate attributeName="opacity" values="0.2;0.6;0.2" dur="2.5s" repeatCount="indefinite"/>
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Logo Ring Animation -->
+                <div class="splash-logo-ring"></div>
             </div>
-            <h1 class="loading-title">Drive Nest</h1>
-            <div class="loading-spinner"></div>
+
+            <!-- Brand Section -->
+            <div class="splash-brand">
+                <h1 class="splash-title">
+                    <span class="title-word word-1">Drive</span>
+                    <span class="title-word word-2">Nest</span>
+                </h1>
+                <p class="splash-tagline">Your Personal Cloud Storage Solution</p>
+            </div>
+
+            <!-- Loading Animation -->
+            <div class="splash-loading">
+                <div class="loading-dots">
+                    <div class="dot dot-1"></div>
+                    <div class="dot dot-2"></div>
+                    <div class="dot dot-3"></div>
+                    <div class="dot dot-4"></div>
+                    <div class="dot dot-5"></div>
+                </div>
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
+                    <div class="loading-shimmer"></div>
+                </div>
+            </div>
+
+            <!-- Credits -->
+            <div class="splash-credits">
+                <p class="credits-text">
+                    <span class="credits-by">Crafted by</span>
+                    <span class="credits-name">Sarbeswar Panda</span>
+                </p>
+                <div class="credits-decoration"></div>
+            </div>
+        </div>
+
+        <!-- Loading Status Text -->
+        <div class="splash-status">
+            <span id="loading-status-text">Initializing...</span>
         </div>
     </div>
 
     <!-- Auth Gate -->
     <div id="auth-gate" class="auth-gate hidden">
         <div class="auth-content">
+            <!-- Background Animation -->
+            <div class="auth-background">
+                <div class="floating-shape shape-1"></div>
+                <div class="floating-shape shape-2"></div>
+                <div class="floating-shape shape-3"></div>
+                <div class="floating-shape shape-4"></div>
+            </div>
+
             <header class="hero">
-                <div class="hero-logo">
-                    <svg class="logo large" viewBox="0 0 100 100" width="120" height="120">
-                        <defs>
-                            <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:var(--brand);stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:var(--brand-600);stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <rect x="10" y="20" width="80" height="60" rx="15" fill="url(#heroGradient)" opacity="0.3"/>
-                        <rect x="15" y="25" width="70" height="50" rx="12" fill="url(#heroGradient)" opacity="0.6"/>
-                        <rect x="20" y="30" width="60" height="40" rx="10" fill="url(#heroGradient)"/>
-                        <circle cx="35" cy="45" r="3" fill="white" opacity="0.8"/>
-                        <circle cx="50" cy="45" r="3" fill="white" opacity="0.8"/>
-                        <circle cx="65" cy="45" r="3" fill="white" opacity="0.8"/>
-                    </svg>
+                <div class="hero-logo-container">
+                    <!-- Main Logo Image (will be added) -->
+                    <div class="logo-wrapper">
+                        <img src="assets/images/drive-nest-logo.png" alt="Drive Nest Logo" class="main-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <!-- Fallback SVG Logo -->
+                        <div class="fallback-logo" style="display: none;">
+                            <svg class="logo large" viewBox="0 0 120 120" width="120" height="120">
+                                <defs>
+                                    <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                        <stop offset="50%" style="stop-color:#a855f7;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                                    </linearGradient>
+                                    <filter id="glow">
+                                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                        <feMerge> 
+                                            <feMergeNode in="coloredBlur"/>
+                                            <feMergeNode in="SourceGraphic"/>
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <!-- Cloud-like nest structure -->
+                                <circle cx="60" cy="60" r="45" fill="url(#heroGradient)" opacity="0.1" filter="url(#glow)"/>
+                                <path d="M30 50 Q30 35 45 35 Q60 20 75 35 Q90 35 90 50 Q90 65 75 65 L45 65 Q30 65 30 50 Z" fill="url(#heroGradient)" opacity="0.8"/>
+                                <circle cx="40" cy="55" r="4" fill="white" opacity="0.9"/>
+                                <circle cx="60" cy="50" r="4" fill="white" opacity="0.9"/>
+                                <circle cx="80" cy="55" r="4" fill="white" opacity="0.9"/>
+                                <!-- Nest elements -->
+                                <path d="M45 75 Q60 85 75 75" stroke="url(#heroGradient)" stroke-width="3" fill="none" opacity="0.7"/>
+                                <path d="M50 80 Q60 87 70 80" stroke="url(#heroGradient)" stroke-width="2" fill="none" opacity="0.5"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- Logo text with enhanced styling -->
+                    <div class="brand-text">
+                        <h1 class="hero-title">Drive Nest</h1>
+                        <div class="brand-subtitle">Cloud Storage Reimagined</div>
+                    </div>
                 </div>
-                <h1 class="hero-title">Drive Nest</h1>
-                <p class="hero-tagline">Your secure personal cloud storage solution</p>
+                
+                <div class="hero-content">
+                    <p class="hero-tagline">Your secure personal cloud storage solution with intelligent file management</p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <div class="stat-number">1GB</div>
+                            <div class="stat-label">Free Storage</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">∞</div>
+                            <div class="stat-label">File Types</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Secure</div>
+                        </div>
+                    </div>
+                </div>
             </header>
             
             <div class="features">
-                <div class="feature">
-                    <div class="feature-icon">📁</div>
-                    <h3>Store Anything</h3>
-                    <p>Upload and store any file type with intelligent previews</p>
+                <div class="feature glass-card">
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">�️</div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Smart Organization</h3>
+                        <p>AI-powered file categorization and intelligent search across all your documents</p>
+                    </div>
                 </div>
-                <div class="feature">
-                    <div class="feature-icon">🔒</div>
-                    <h3>Secure Sharing</h3>
-                    <p>Share files with granular permissions and expiry controls</p>
+                <div class="feature glass-card">
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">�</div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Bank-Grade Security</h3>
+                        <p>End-to-end encryption with granular sharing permissions and access controls</p>
+                    </div>
                 </div>
-                <div class="feature">
-                    <div class="feature-icon">🌍</div>
-                    <h3>Access Anywhere</h3>
-                    <p>Access your files from any device, anytime</p>
+                <div class="feature glass-card">
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">⚡</div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Lightning Fast</h3>
+                        <p>Instant uploads, real-time sync, and blazing-fast file access from anywhere</p>
+                    </div>
+                </div>
+                <div class="feature glass-card">
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">🎯</div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Smart Preview</h3>
+                        <p>Preview any file type instantly without downloading - images, docs, videos & more</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trust Indicators -->
+            <div class="trust-section">
+                <div class="trust-item">
+                    <span class="trust-icon">✅</span>
+                    <span>Zero-Knowledge Architecture</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">🌐</span>
+                    <span>Cross-Platform Support</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-icon">⚡</span>
+                    <span>Real-time Synchronization</span>
                 </div>
             </div>
             
             <div class="auth-actions">
-                <button id="google-signin-btn" class="btn btn-primary btn-large">
-                    <svg width="20" height="20" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    Continue with Google
+                <button id="google-signin-btn" class="btn btn-primary btn-large btn-hero">
+                    <div class="btn-content">
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        <span>Get Started with Google</span>
+                    </div>
+                    <div class="btn-shine"></div>
                 </button>
+                
+                <div class="auth-footer">
+                    <p class="privacy-notice">
+                        <span class="privacy-icon">🔒</span>
+                        Your privacy is protected. We never access your files or personal data.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -269,19 +538,22 @@
         <nav class="sidebar">
             <div class="sidebar-header">
                 <div class="logo-container">
-                    <svg class="logo" viewBox="0 0 100 100" width="40" height="40">
+                    <!-- Main Logo Image -->
+                    <img src="assets/images/drive-nest-logo.png" alt="Drive Nest Logo" class="sidebar-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <!-- Fallback SVG Logo -->
+                    <svg class="logo sidebar-fallback" viewBox="0 0 120 120" width="40" height="40" style="display: none;">
                         <defs>
                             <linearGradient id="sidebarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:var(--brand);stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:var(--brand-600);stop-opacity:1" />
+                                <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#a855f7;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
                             </linearGradient>
                         </defs>
-                        <rect x="10" y="20" width="80" height="60" rx="15" fill="url(#sidebarGradient)" opacity="0.3"/>
-                        <rect x="15" y="25" width="70" height="50" rx="12" fill="url(#sidebarGradient)" opacity="0.6"/>
-                        <rect x="20" y="30" width="60" height="40" rx="10" fill="url(#sidebarGradient)"/>
-                        <circle cx="35" cy="45" r="3" fill="white" opacity="0.8"/>
-                        <circle cx="50" cy="45" r="3" fill="white" opacity="0.8"/>
-                        <circle cx="65" cy="45" r="3" fill="white" opacity="0.8"/>
+                        <circle cx="60" cy="60" r="45" fill="url(#sidebarGradient)" opacity="0.1"/>
+                        <path d="M30 50 Q30 35 45 35 Q60 20 75 35 Q90 35 90 50 Q90 65 75 65 L45 65 Q30 65 30 50 Z" fill="url(#sidebarGradient)" opacity="0.8"/>
+                        <circle cx="40" cy="55" r="3" fill="white" opacity="0.9"/>
+                        <circle cx="60" cy="50" r="3" fill="white" opacity="0.9"/>
+                        <circle cx="80" cy="55" r="3" fill="white" opacity="0.9"/>
                     </svg>
                 </div>
                 <span class="sidebar-title">Drive Nest</span>
